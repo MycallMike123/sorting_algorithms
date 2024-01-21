@@ -13,7 +13,7 @@ void quick_sort(int *array, size_t size)
 	if (array == NULL || size < 2)
 		return;
 
-	lomuto_partition(array, 0, size - 1, size);
+	lomuto_partition(array, size, 0, size - 1);
 }
 
 /**
@@ -46,8 +46,8 @@ void lomuto_partition(int *array, size_t size, int left, int right)
 	if (right - left > 0)
 	{
 		partition = _lomuto_partition(array, size, left, right);
-		lomuto_partition(array, size, left, part - 1);
-		lomuto_partition(array, size, part + 1, right);
+		lomuto_partition(array, size, left, partition - 1);
+		lomuto_partition(array, size, partition + 1, right);
 	}
 }
 
