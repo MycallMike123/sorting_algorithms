@@ -13,61 +13,77 @@ void quick_sort(int *array, size_t size)
 	if (array == NULL || size < 2)
 		return;
 
-	recursive_quick_sort(array, 0, size - 1, size);
+	lomuto_partition(array, 0, size - 1, size);
 }
 
 /**
  * recursive_quick_sort - Recursive helper function for Quick Sort
- * @array: The array to be sorted
- * @low: The lower index of the partition
- * @high: The higher index of the partition
- * @size: Number of elements in the array
+ * @a: The first int to swap
+ * @b: The second int to swap
  */
 
-void recursive_quick_sort(int *array, int low, int high, size_t size)
+void recursive_quick_sort(int *a, int *b)
 {
-	int pivot_idx;
+	int tmp;
 
-	if (low < high)
-	{
-		pivot_idx = lomuto_partition(array, low, high, size);
-		recursive_quick_sort(array, low, pivot_idx - 1, size);
-		recursive_quick_sort(array, pivot_idx + 1, high, size);
-	}
+	tmp = *a;
+	*a = *b;
+	*b = tmp;
 }
 
 /**
  * lomuto_partition - Lomuto partition scheme for Quick Sort
  * @array: The array to be sorted
- * @low: The lower index of the partition
- * @high: The higher index of the partition
- * @size: Number of elements in the array
- * Return: The pivot index
+ * @size: The size of the array
+ * @left: The starting index
+ * @right: The ending index
  */
 
-int lomuto_partition(int *array, int low, int high, size_t size)
+void lomuto_partition(int *array, size_t size, int left, int right)
 {
-	int pivot, tmp, a, b;
+	int partition;
 
-	pivot = array[high];
-	a = low - 1;
-
-	for (b = low; b <= high - 1; b++)
+	if (right - left > 0)
 	{
-		if (array[b] <= pivot)
-		{
-			a++;
-			tmp = array[a];
-			array[a] = array[b];
-			array[b] = tmp;
+		partition = _lomuto_partition(array, size, left, right);
+		lomuto_partition(array, size, left, part - 1);
+		lomuto_partition(array, size, part + 1, right);
+	}
+}
 
-			print_array(array, size);
+/**
+ * _lomuto_partition - Order a subset of an array of integers according to
+ * the lomuto partition scheme (last element as pivot)
+ * @array: The array of ints
+ * @size: The size of the array
+ * @left: The starting index
+ * @right: The ending index
+ * Return: The final partition index.
+ */
+int _lomuto_partition(int *array, size_t size, int left, int right)
+{
+	int *pivot, up, down;
+
+	pivot = array + right;
+
+	for (up = down = left; down < right; down++)
+	{
+		if (array[down] < *pivot)
+		{
+			if (up < down)
+			{
+				recursive_quick_sort(array + down, array + up);
+				print_array(array, size);
+			}
+			up++;
 		}
 	}
 
-	tmp = array[a + 1];
-	array[a + 1] = array[high];
-	array[high] = tmp;
+	if (array[up] > *pivot)
+	{
+		recursive_quick_sort(array + up, pivot);
+		print_array(array, size);
+	}
 
-	return (a + 1);
+	return (up);
 }
